@@ -61,12 +61,31 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
 
 # CREATE DIARY ENTRY
+from rest_framework.views import APIView
+from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+import cloudinary.uploader
+
 class CreateDiaryView(APIView):
     permission_classes = [IsAuthenticated]
     parser_classes = [MultiPartParser, FormParser]
 
     def post(self, request):
-        serializer = DiaryEntrySerializer(data=request.data)
+        data = request.data.copy()
+
+        # Get file from request
+        image_file = request.FILES.get("photos")
+
+        if image_file:
+            # Upload to Cloudinary
+            upload_result = cloudinary.uploader.upload(image_file)
+            secure_url = upload_result.get("secure_url")
+
+            # Save the URL instead of the raw file
+            data["photos"] = secure_url
+
+        serializer = DiaryEntrySerializer(data=data)
 
         if serializer.is_valid():
             serializer.save(author=request.user)

@@ -17,7 +17,7 @@ class DiaryEntry(models.Model):
     description = models.TextField()
     location = models.CharField(max_length=255)
     date = models.DateField()
-    photos = models.ImageField(upload_to='diary_photos/', blank=True, null=True)
+    photos = models.URLField(max_length=500, blank=True, null=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="diary_entries")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
