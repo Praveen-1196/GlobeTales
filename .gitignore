@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+env/
+venv/
+ENV/
+*.env
+
+# Environment variables
+.env
+
+# Django stuff
+db.sqlite3
+staticfiles/
+media/
+
+# VSCode
+.vscode/
+
+# Byte-compiled / optimized / DLL files
+*.py[cod]
+*$py.class
+
+# Build directories
+build/
+dist/
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Local configs
+*.log
