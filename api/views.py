@@ -532,3 +532,46 @@ class ListBookmarksView(APIView):
         diaries = [b.diary_entry for b in bookmarks]
         serializer = DiaryEntrySerializer(diaries, many=True)
         return Response(serializer.data)
+
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes
+
+class ForgotPasswordView(APIView):
+    def post(self, request):
+        email = request.data.get("email")
+        if not email:
+            return Response({"error": "Email required"}, status=400)
+
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return Response({"error": "No user found with this email"}, status=404)
+
+        token = PasswordResetTokenGenerator().make_token(user)
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+
+        reset_link = f"https://your-frontend-domain/reset-password/{uid}/{token}"
+
+        # Since emails are fake, we return link directly
+        return Response({"message": "Reset link generated", "reset_link": reset_link})
+
+class ResetPasswordConfirmView(APIView):
+    def post(self, request, uid, token):
+        try:
+            uid = urlsafe_base64_decode(uid).decode()
+            user = User.objects.get(pk=uid)
+        except:
+            return Response({"error": "Invalid user"}, status=400)
+
+        if not PasswordResetTokenGenerator().check_token(user, token):
+            return Response({"error": "Invalid or expired token"}, status=400)
+
+        new_password = request.data.get("password")
+        if not new_password:
+            return Response({"error": "Password required"}, status=400)
+
+        user.set_password(new_password)
+        user.save()
+
+        return Response({"message": "Password reset successfully"})

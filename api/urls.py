@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import MyDiariesView, RegisterView, LoginView,LikeStatusView,ProfileView,ChangePasswordView,PublicProfileView
 from .views import ToggleBookmarkView, IsBookmarkedView, ListBookmarksView
-
+from .views import ForgotPasswordView, ResetPasswordConfirmView
 
 from .views import (
     CreateDiaryView,
@@ -70,6 +70,9 @@ urlpatterns = [
 path("diary/<int:diary_id>/bookmark-toggle/", ToggleBookmarkView.as_view()),
 path("diary/<int:diary_id>/bookmarked/", IsBookmarkedView.as_view()),
 path("bookmarks/", ListBookmarksView.as_view()),
+path("forgot-password/", ForgotPasswordView.as_view()),
+path("reset-password/<uid>/<token>/", ResetPasswordConfirmView.as_view()),
+
 
 ]
 
