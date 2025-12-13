@@ -551,7 +551,7 @@ class ForgotPasswordView(APIView):
         token = PasswordResetTokenGenerator().make_token(user)
         uid = urlsafe_base64_encode(force_bytes(user.pk))
 
-        reset_link = f"https://your-frontend-domain/reset-password/{uid}/{token}"
+        reset_link = f"https://globe-tales-fe.vercel.app//reset-password/{uid}/{token}"
 
         # Since emails are fake, we return link directly
         return Response({"message": "Reset link generated", "reset_link": reset_link})
