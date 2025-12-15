@@ -39,7 +39,7 @@ class DiaryEntrySerializer(serializers.ModelSerializer):
     author = serializers.SerializerMethodField()
     like_count = serializers.SerializerMethodField()
     comment_count = serializers.SerializerMethodField()
-    photos = serializers.SerializerMethodField()   # 🔥 override default field
+    photos = serializers.SerializerMethodField()
 
     class Meta:
         model = DiaryEntry
@@ -57,44 +57,40 @@ class DiaryEntrySerializer(serializers.ModelSerializer):
             "comment_count",
         ]
 
-    # === AUTHOR FIELD ===
+    # AUTHOR
     def get_author(self, obj):
+        if not obj.author:
+            return None
         return {
             "id": obj.author.id,
             "username": obj.author.username,
             "email": obj.author.email,
         }
 
-    # === LIKE COUNT ===
+    # LIKE COUNT (SAFE)
     def get_like_count(self, obj):
-        return obj.likes.count()
+        return Like.objects.filter(diary_entry=obj).count()
 
-    # === COMMENT COUNT ===
+    # COMMENT COUNT (SAFE)
     def get_comment_count(self, obj):
-        return obj.comment_set.count()
+        return Comment.objects.filter(diary_entry=obj).count()
 
-    # === FIX PHOTOS FIELD (MAIN FIX YOU NEED!) ===
+    # PHOTO URL FIX (Cloudinary + Render + Local)
     def get_photos(self, obj):
-        """
-        Always return a full usable image URL.
-        Handles both Cloudinary URLs and local URLs.
-        """
         if not obj.photos:
             return None
 
         url = str(obj.photos)
 
-        # If already a full Cloudinary URL → return directly
+        # Cloudinary already gives full URL
         if url.startswith("http"):
             return url
 
-        # Otherwise build absolute URL (local dev only)
         request = self.context.get("request")
         if request:
             return request.build_absolute_uri(url)
 
-        return url  # fallback
-
+        return url
 
         
 

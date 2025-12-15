@@ -98,7 +98,7 @@ class CreateDiaryView(APIView):
 class ListDiariesView(APIView):
     def get(self, request):
         entries = DiaryEntry.objects.all().order_by('-created_at')
-        serializer = DiaryEntrySerializer(entries, many=True)
+        serializer = DiaryEntrySerializer(entries, many=True,context={"request": request})
         return Response(serializer.data)
 
 class MyDiariesView(APIView):
@@ -118,7 +118,7 @@ class DiaryDetailView(APIView):
         except DiaryEntry.DoesNotExist:
             return Response({"error": "Diary not found"}, status=404)
 
-        serializer = DiaryEntrySerializer(entry)
+        serializer = DiaryEntrySerializer(entry,context={"request": request})
         return Response(serializer.data)
 
 
