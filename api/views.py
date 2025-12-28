@@ -136,8 +136,14 @@ class UpdateDiaryView(APIView):
         # Only author can update
         if entry.author != request.user:
             return Response({"error": "Not allowed"}, status=403)
+        data = request.data.copy()
 
-        serializer = DiaryEntrySerializer(entry, data=request.data, partial=True)
+        # 🔥 Handle image upload properly
+        image_file = request.FILES.get("photos")
+        if image_file:
+            upload = cloudinary.uploader.upload(image_file)
+            data["photos"] = upload["secure_url"]
+        serializer = DiaryEntrySerializer(entry, data=data, partial=True,context={"request": request})
 
         if serializer.is_valid():
             serializer.save()
