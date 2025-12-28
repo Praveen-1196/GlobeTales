@@ -39,7 +39,7 @@ class DiaryEntrySerializer(serializers.ModelSerializer):
     author = serializers.SerializerMethodField()
     like_count = serializers.SerializerMethodField()
     comment_count = serializers.SerializerMethodField()
-    photos = serializers.SerializerMethodField()
+    # photos = serializers.SerializerMethodField()
 
     class Meta:
         model = DiaryEntry
@@ -91,8 +91,8 @@ class DiaryEntrySerializer(serializers.ModelSerializer):
     #         return request.build_absolute_uri(url)
 
     #     return url
-    def get_photos(self, obj):
-        return obj.photos
+    # def get_photos(self, obj):
+    #     return obj.photos
 
 
         
