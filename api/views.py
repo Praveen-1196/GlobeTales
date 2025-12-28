@@ -80,12 +80,12 @@ class CreateDiaryView(APIView):
         if image_file:
             # Upload to Cloudinary
             upload_result = cloudinary.uploader.upload(image_file)
-            secure_url = upload_result.get("secure_url")
+            # secure_url = upload_result.get("secure_url")
 
             # Save the URL instead of the raw file
-            data["photos"] = secure_url
+            data["photos"] = upload_result["secure_url"]
 
-        serializer = DiaryEntrySerializer(data=data)
+        serializer = DiaryEntrySerializer(data=data,context={"request": request})
 
         if serializer.is_valid():
             serializer.save(author=request.user)

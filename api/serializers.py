@@ -76,21 +76,24 @@ class DiaryEntrySerializer(serializers.ModelSerializer):
         return Comment.objects.filter(diary_entry=obj).count()
 
     # PHOTO URL FIX (Cloudinary + Render + Local)
+    # def get_photos(self, obj):
+    #     if not obj.photos:
+    #         return None
+
+    #     url = str(obj.photos)
+
+    #     # Cloudinary already gives full URL
+    #     if url.startswith("http"):
+    #         return url
+
+    #     request = self.context.get("request")
+    #     if request:
+    #         return request.build_absolute_uri(url)
+
+    #     return url
     def get_photos(self, obj):
-        if not obj.photos:
-            return None
+        return obj.photos
 
-        url = str(obj.photos)
-
-        # Cloudinary already gives full URL
-        if url.startswith("http"):
-            return url
-
-        request = self.context.get("request")
-        if request:
-            return request.build_absolute_uri(url)
-
-        return url
 
         
 
